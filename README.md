@@ -1,3 +1,3 @@
 # UsuariosApi
 
-1. Api created to allow creation and authentication of users.
+1. Api to allow creation and authentication of users.
