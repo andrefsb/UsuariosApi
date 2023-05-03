@@ -8,7 +8,7 @@ namespace UsuariosApi.Data.Dtos
         public string Username { get; set; }
 
         [Required]
-        public DateTime DataNascimento { get; set; }
+        public DateTime Birthday { get; set; }
         
         [Required]
         [DataType(DataType.Password)]

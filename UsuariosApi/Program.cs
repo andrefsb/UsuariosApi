@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using UsuariosApi.Authorization;
 using UsuariosApi.Data;
 using UsuariosApi.Models;
@@ -15,6 +19,7 @@ namespace UsuariosApi
         {
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("UsuarioConnection");
+            var key = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("myConfiguration")["Chave"];
             // Add services to the container.
 
             builder.Services.AddDbContext<UsuarioDbContext>
@@ -32,6 +37,23 @@ namespace UsuariosApi
             builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(Path.GetTempPath()));
 
             builder.Services.AddSingleton<IAuthorizationHandler, IdadeAuthorization>();
+           
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme =
+                    JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key.ToString())),
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
             builder.Services.AddAuthorization(options =>
             {
@@ -58,6 +80,7 @@ namespace UsuariosApi
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
