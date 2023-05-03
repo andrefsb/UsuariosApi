@@ -29,6 +29,13 @@ namespace UsuariosApi
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(Path.GetTempPath()));
 
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("IdadeMinima", policy =>
+                     policy.AddRequirements(new IdadeMinima(18))
+                );
+            });
+
             builder.Services.AddScoped<UsuarioService>();
             builder.Services.AddScoped<TokenService>();
 

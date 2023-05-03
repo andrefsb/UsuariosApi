@@ -16,7 +16,7 @@ namespace UsuariosApi.Services
                 new Claim("username", usuario.UserName),
                 new Claim("id", usuario.Id),
                 new Claim(ClaimTypes.DateOfBirth, usuario.Birthday.ToString())
-            };
+             };
 
             var key = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("myConfiguration")["Chave"];
 
